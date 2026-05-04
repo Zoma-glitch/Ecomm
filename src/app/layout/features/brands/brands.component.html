@@ -1,0 +1,33 @@
+
+
+
+
+
+<div class="grid gap-3 grid-cols-2 lg:grid-cols-5">
+  @for (item of allBrands(); track $index) {
+
+  <!-- Card -->
+  <div
+    class="group bg-white rounded-2xl p-5 text-center shadow-md border border-transparent
+           hover:-translate-y-2 hover:shadow-xl hover:border-purple-500
+           transition-all duration-300 cursor-pointer">
+
+    <div class="bg-gray-50 rounded-xl p-6 flex items-center justify-center">
+      <img [src]="item.image" class="h-16 object-contain" />
+    </div>
+
+    <h3 class="mt-4 text-lg font-semibold text-gray-900">
+      {{ item.name }}
+    </h3>
+    <a
+      class="mt-2 inline-block text-purple-500 opacity-0 group-hover:opacity-100 transition">
+      View Products →
+    </a>
+  </div>
+
+
+}
+
+</div>
+
+

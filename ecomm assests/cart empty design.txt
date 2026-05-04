@@ -1,0 +1,40 @@
+<section class="px-6 py-16">
+
+  <div class="container mx-auto flex flex-col items-center text-center max-w-lg">
+
+    <!-- Icon -->
+    <div class="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center mb-6">
+
+      <i class="fa-solid fa-box-open text-gray-300 text-5xl"></i>
+
+    </div>
+
+
+    <!-- Title -->
+    <h2 class="text-2xl font-semibold mb-3">
+      Your cart is empty
+    </h2>
+
+
+    <!-- Description -->
+    <p class="text-gray-500 text-sm mb-8 leading-relaxed">
+      Looks like you haven't added anything to your cart yet. <br>
+      Start exploring our products!
+    </p>
+
+
+    <!-- CTA Button -->
+    <button
+      class="flex items-center gap-3 bg-green-600 text-white px-7 py-3 rounded-xl font-medium
+      cursor-pointer hover:bg-green-700">
+
+      Start Shopping
+
+      <i class="fa-solid fa-arrow-right"></i>
+
+    </button>
+
+  </div>
+
+</section>
+

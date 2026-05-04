@@ -1,0 +1,115 @@
+import { inject, Injectable } from '@angular/core';
+import { catchError, forkJoin, map, mergeMap, Observable, retry, shareReplay, tap, throwError } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RxjsTestService {
+  private http: HttpClient = inject(HttpClient);
+  $products: Observable<any> | null = null;
+
+  //map
+  //The map() operator is useful for modifying API responses.
+  getCatWitheditRes(): Observable<any> {
+    return this.http.get<any>(`${environment.baseUrl}/api/v1/categories`).pipe(
+      map((CatsRes) =>
+        //       []
+        CatsRes.data.map((oneCat: any) => {
+          let cat: any = {};
+          cat.name = oneCat.name;
+          cat.image = oneCat.image;
+          return cat;
+        })
+      )
+    );
+  }
+
+  // mergeMap
+  //Use mergeMap() to call an API based on another API’s result.
+  getspecCatofProId(pId: string): Observable<any> {
+    return this.http
+      .get<any>(`${environment.baseUrl}/api/v1/products/${pId}`)
+      .pipe(
+        mergeMap((prodRes) =>
+          this.http.get<any>(
+            `${environment.baseUrl}/api/v1/categories/${prodRes.data.category._id}`
+          )
+        ),
+        map((res: any) => {
+
+          let cat: any = {};
+          cat.name = res.data.name;
+          cat.image = res.data.image;
+          return cat;
+
+        })
+      );
+  }
+
+  // forkJoin
+  //forkJoin() is useful when you need to fetch multiple API calls simultaneously and wait for all responses.
+  getFork(): Observable<any> {
+    return forkJoin({
+      products: this.http.get(`${environment.baseUrl}/api/v1/products`),
+      categories: this.http.get(`${environment.baseUrl}/api/v1/categories`),
+    });
+  }
+
+  //catchError
+  //catchError() helps manage errors gracefully.
+  getProductsAndHandleError(): Observable<any> {
+    return this.http.get(`${environment.baseUrl}/api/v1/products`).pipe(
+      // rxjs
+      catchError((err) => {
+        console.log('catchError from service : ' + err);
+        return throwError(() => new Error(err));
+      })
+    );
+  }
+
+  //tap
+  //tap() allows you to log values without modifying them.
+  getProductsTap(): Observable<any> {
+    return this.http
+      .get<any>(`${environment.baseUrl}/api/v1/products`)
+      .pipe(tap((res) => console.log('products : ', res.data)));
+  }
+
+  //shareReplay
+  //shareReplay() helps cache API responses so multiple subscribers don’t trigger separate calls.
+  hamada(): Observable<any> {
+    if (!this.$products) {
+      this.$products = this.http
+        .get<any>(`${environment.baseUrl}/api/v1/products`)
+        .pipe(shareReplay(1));
+    }
+
+    return this.$products;
+  }
+
+  //retry
+  //If an API fails, retry() can automatically retry the request a set number of times.
+  getProductsRetry3TimesBforFaild(): Observable<any> {
+    return (this.$products = this.http
+      .get<any>(`${environment.baseUrl}/api/v1/products`)
+      .pipe(
+        retry(3),
+        catchError((err) => {
+          console.log('Sorry after retry 3 times');
+          return throwError(() => new Error(err));
+        })
+      ));
+  }
+
+  //switchMap
+  //Cancels previous API calls if a new request comes in.
+  //Useful for search inputs, live filters, and dependent API calls.
+  //Ensures only the latest request is processed, ignoring outdated ones.
+  getProductsWithPriceSearch(pPrice: string): Observable<any> {
+    return this.http.get<any>(
+      `${environment.baseUrl}/api/v1/products?price[gte]=${pPrice}`
+    );
+  }
+}
