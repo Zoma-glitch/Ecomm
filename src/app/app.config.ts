@@ -9,7 +9,7 @@ import { headerInterceptor } from './core/interceptors/headers/header-intercepto
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes , withHashLocation() ,withInMemoryScrolling({
+    provideRouter(routes  ,withInMemoryScrolling({
       scrollPositionRestoration: 'enabled'}),withViewTransitions() ), provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch(), withInterceptors([headerInterceptor]))
   ]
